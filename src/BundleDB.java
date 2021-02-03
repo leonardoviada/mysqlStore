@@ -26,13 +26,27 @@ public class BundleDB {
         return new Bundle(rs.getInt("id"), rs.getString("name"));
     }
 
-    static boolean update(int id, Bundle bundle) throws SQLException {
+    static int getId(Bundle bundle) throws SQLException {
+        ResultSet rs = getConnection().createStatement().executeQuery(String.format(
+                "SELECT * FROM bundles WHERE name='%s';", bundle.getName())
+        );
+
+        rs.next();
+        return rs.getInt("id");
+    }
+
+    static boolean update(Bundle bundle) throws SQLException {
         return getConnection().createStatement().execute(String.format(
-                "UPDATE products SET name=%s WHERE id=%d;", bundle.getName(), id)
+                "UPDATE products SET name=%s WHERE name='%s';", bundle.getName(), bundle.getName())
         );
     }
 
-    static boolean delete(int id) throws SQLException {
-        return getConnection().createStatement().execute(String.format("DELETE FROM bundles WHERE id=%d;", id));
+    static boolean delete(Bundle bundle) throws SQLException {
+        return getConnection().createStatement().execute(String.format("DELETE FROM bundles WHERE name='%s';", bundle.getName()));
+    }
+
+    static boolean clean() throws SQLException {
+        return (getConnection().createStatement().execute("TRUNCATE TABLE bundles;") &&
+                getConnection().createStatement().execute("ALTER TABLE bundles AUTO_INCREMENT = 1;"));
     }
 }

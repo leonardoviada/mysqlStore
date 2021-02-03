@@ -1,3 +1,5 @@
+import java.sql.SQLException;
+
 public class Product {
 
     private int id = -1;
@@ -61,5 +63,13 @@ public class Product {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 '}';
+    }
+
+    public void save() {
+        try {
+            ProductDB.insert(this);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

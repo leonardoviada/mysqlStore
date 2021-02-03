@@ -1,9 +1,10 @@
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Bundle {
     private int id = -1;
     private String name = null;
-    private ArrayList<Product> products = null;
+    private ArrayList<Product> products = new ArrayList<>();
 
     public Bundle() {
     }
@@ -69,5 +70,18 @@ public class Bundle {
             if (product.getId() == id) return product;
         }
         return null;
+    }
+
+    // Al momento, la brutta implementazione, richiede che i prodotti siano salvati prima di procedere
+    public void save() {
+        try {
+            BundleDB.insert(this);
+            for (Product product : products) {
+                ProductDB.update(product, BundleDB.getId(this));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
     }
 }
